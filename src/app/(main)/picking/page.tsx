@@ -10,6 +10,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import { OrderCard } from "@/components/ui/order-card";
+import { OrderDetailSheet } from "@/components/order/OrderDetailSheet";
 
 const columns: PickingColumn[] = ["Unassigned", "Mon", "Tue", "Wed", "Thu", "Fri", "Picked"];
 
@@ -18,16 +19,21 @@ export default function PickingBoard() {
     const moveOrderMutation = useMoveOrderToColumn();
     const updateOrderMutation = useUpdateOrder();
     const [currentWeekOffset, setCurrentWeekOffset] = useState(0);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [sheetOpen, setSheetOpen] = useState(false);
+
+    const handleOrderClick = (order: Order) => {
+        setSelectedOrder(order);
+        setSheetOpen(true);
+    };
 
     // Filter orders that are in picking stage OR unassigned_driver with Unassigned column
     // OR orders that have isReady=false (not ready to go out yet)
-    // This ensures new orders appear here.
-    // EXCLUDE orders that are already "Picked" so they disappear from the board.
+    // OR orders that are in the Picked column
     const pickingOrders = orders.filter(
-        (o) => (o.stage === "picking" ||
-            (o.stage === "unassigned_driver" && o.pickingColumn === "Unassigned") ||
-            o.isReady === false) &&
-            o.pickingColumn !== "Picked"
+        (o) => o.stage === "picking" ||
+            (o.stage === "unassigned_driver" && (o.pickingColumn === "Unassigned" || o.pickingColumn === "Picked")) ||
+            o.isReady === false
     );
 
     const handleDragEnd = (result: DropResult) => {
@@ -37,11 +43,28 @@ export default function PickingBoard() {
 
         const newColumn = destination.droppableId as PickingColumn;
 
+        // Compute the scheduled date based on the weekday column
+        const getDateForColumn = (column: PickingColumn): Date | null => {
+            const dayMap: Record<string, number> = { Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4 };
+            if (!(column in dayMap)) return null; // Unassigned or Picked
+
+            const today = new Date();
+            const currentDay = today.getDay();
+            const monday = new Date(today);
+            monday.setDate(today.getDate() - (currentDay === 0 ? 6 : currentDay - 1) + currentWeekOffset * 7);
+
+            const targetDate = new Date(monday);
+            targetDate.setDate(monday.getDate() + dayMap[column]);
+            return targetDate;
+        };
+
+        const scheduledDate = getDateForColumn(newColumn);
+
         // Optimistic update in local store
-        moveOrderToColumn(draggableId, newColumn);
+        moveOrderToColumn(draggableId, newColumn, scheduledDate);
 
         // Persist to Supabase
-        moveOrderMutation.mutate({ orderId: draggableId, newColumn });
+        moveOrderMutation.mutate({ orderId: draggableId, newColumn, scheduledDate });
     };
 
     const handleMarkReady = (order: Order) => {
@@ -181,6 +204,7 @@ export default function PickingBoard() {
                                                                         <OrderCard
                                                                             order={order}
                                                                             isDragging={snapshot.isDragging}
+                                                                            onClick={() => handleOrderClick(order)}
                                                                         />
 
                                                                         {/* Ready for Dispatch button - only for non-ready orders */}
@@ -230,6 +254,13 @@ export default function PickingBoard() {
                     </div>
                 </DragDropContext>
             </div>
+            {/* Order Detail Sheet */}
+            <OrderDetailSheet
+                order={selectedOrder}
+                open={sheetOpen}
+                onOpenChange={setSheetOpen}
+                hideDriverAssign
+            />
         </div>
     );
 }

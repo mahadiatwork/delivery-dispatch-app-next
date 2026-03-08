@@ -1,6 +1,6 @@
 import { Order } from "@/types/order";
 import { cn } from "@/lib/utils";
-import { Package, MapPin, Clock, FileText, Tag } from "lucide-react";
+import { Package, MapPin, Clock, FileText, Tag, CalendarDays } from "lucide-react";
 
 interface OrderCardProps {
   order: Order;
@@ -94,8 +94,19 @@ export function OrderCard({ order, isDragging, onClick }: OrderCardProps) {
       {/* Footer */}
       <div className="flex items-center justify-between pt-2 border-t border-border/50">
         <div className="flex items-center gap-1 text-xs text-muted-foreground">
-          <Clock className="w-3 h-3" />
-          <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+          {order.scheduledDate ? (
+            <>
+              <CalendarDays className="w-3 h-3 text-primary" />
+              <span className="text-primary font-medium">
+                {new Date(order.scheduledDate).toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
+              </span>
+            </>
+          ) : (
+            <>
+              <Clock className="w-3 h-3" />
+              <span>{new Date(order.createdAt).toLocaleDateString()}</span>
+            </>
+          )}
         </div>
         <div className="flex items-center gap-1.5">
           {order.orderDocumentUrl && (

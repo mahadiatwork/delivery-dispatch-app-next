@@ -188,7 +188,7 @@ export const useMoveOrderToColumn = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ orderId, newColumn }: { orderId: string; newColumn: PickingColumn }) => {
+    mutationFn: async ({ orderId, newColumn, scheduledDate }: { orderId: string; newColumn: PickingColumn; scheduledDate?: Date | null }) => {
       const updates: TablesUpdate<"orders"> = {
         picking_column: newColumn as TablesUpdate<"orders">["picking_column"]
       };
@@ -196,8 +196,12 @@ export const useMoveOrderToColumn = () => {
       // Update assignedDay based on column
       if (newColumn === "Unassigned" || newColumn === "Picked") {
         updates.assigned_day = null;
+        updates.scheduled_date = null;
       } else {
         updates.assigned_day = newColumn as TablesUpdate<"orders">["assigned_day"];
+        if (scheduledDate !== undefined) {
+          updates.scheduled_date = scheduledDate ? scheduledDate.toISOString().split("T")[0] : null;
+        }
       }
 
       // When moved to "Picked", update stage

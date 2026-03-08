@@ -33,6 +33,7 @@ interface OrderDetailSheetProps {
   order: Order | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  hideDriverAssign?: boolean;
 }
 
 const orderTypeStyles: Record<string, string> = {
@@ -50,7 +51,7 @@ const stageLabels: Record<string, string> = {
   completed: "Completed",
 };
 
-export function OrderDetailSheet({ order, open, onOpenChange }: OrderDetailSheetProps) {
+export function OrderDetailSheet({ order, open, onOpenChange, hideDriverAssign }: OrderDetailSheetProps) {
   const { drivers, assignOrderToDriver } = useOrderStore();
   const assignOrderMutation = useAssignOrderToDriver();
   const updateOrderMutation = useUpdateOrder();
@@ -325,7 +326,7 @@ export function OrderDetailSheet({ order, open, onOpenChange }: OrderDetailSheet
               // READ ONLY VIEW
               <>
                 {/* Assign Driver */}
-                {order.stage !== "completed" && order.stage !== "pickup_store" && (
+                {!hideDriverAssign && order.stage !== "completed" && order.stage !== "pickup_store" && (
                   <div className="p-3 bg-primary/5 rounded-lg border border-primary/20">
                     <div className="flex items-center gap-2 mb-2">
                       <Truck className="w-4 h-4 text-primary" />

@@ -26,7 +26,7 @@ interface OrderStore {
   setDrivers: (drivers: Driver[]) => void;
   addOrder: (order: Order) => void;
   updateOrder: (id: string, updates: Partial<Order>) => void;
-  moveOrderToColumn: (orderId: string, newColumn: PickingColumn) => void;
+  moveOrderToColumn: (orderId: string, newColumn: PickingColumn, scheduledDate?: Date | null) => void;
   assignOrderToDriver: (orderId: string, driverId: string) => void;
   getOrdersByStage: (stage: Order['stage']) => Order[];
   getOrdersByPickingColumn: (column: PickingColumn) => Order[];
@@ -50,7 +50,7 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
     )
   })),
 
-  moveOrderToColumn: (orderId, newColumn) => set((state) => ({
+  moveOrderToColumn: (orderId, newColumn, scheduledDate) => set((state) => ({
     orders: state.orders.map(order => {
       if (order.id !== orderId) return order;
 
@@ -59,8 +59,12 @@ export const useOrderStore = create<OrderStore>((set, get) => ({
       // Update assignedDay based on column
       if (newColumn === "Unassigned" || newColumn === "Picked") {
         updates.assignedDay = null;
+        updates.scheduledDate = null;
       } else {
         updates.assignedDay = newColumn as Order['assignedDay'];
+        if (scheduledDate !== undefined) {
+          updates.scheduledDate = scheduledDate;
+        }
       }
 
       // When moved to "Picked", update stage

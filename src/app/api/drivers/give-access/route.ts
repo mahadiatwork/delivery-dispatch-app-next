@@ -50,8 +50,9 @@ export async function POST(request: NextRequest) {
     if (authError) {
       if (authError.message?.includes('already been registered')) {
         // Auth user exists from a previous revoke — find, delete, and recreate
-        const { data: { users } } = await supabaseAdmin.auth.admin.listUsers();
-        const existing = users?.find(u => u.email === emailTrimmed);
+        const listResult = await supabaseAdmin.auth.admin.listUsers();
+        const users = listResult.data?.users ?? [];
+        const existing = users.find((u: { email?: string }) => u.email === emailTrimmed);
 
         if (existing) {
           await supabaseAdmin.auth.admin.deleteUser(existing.id);

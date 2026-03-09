@@ -41,10 +41,13 @@ const transformOrder = (dbOrder: any): Order => ({
 const transformDriver = (dbDriver: any): Driver => ({
   id: dbDriver.id,
   name: dbDriver.name,
+  email: dbDriver.email || "",
   phone: dbDriver.phone || "",
   truckNumber: dbDriver.truck_number || "",
   vehicleType: dbDriver.vehicle_type as "truck" | "van" | "hotshot",
   isActive: dbDriver.is_active,
+  userId: dbDriver.user_id || null,
+  appAccessEnabled: dbDriver.app_access_enabled ?? false,
 });
 
 // Fetch all orders
@@ -262,11 +265,12 @@ export const useCreateDriver = () => {
 
       const insertData: TablesInsert<"drivers"> = {
         name: driver.name,
+        email: driver.email || null,
         phone: driver.phone,
         truck_number: driver.truckNumber || null,
         vehicle_type: driver.vehicleType,
         is_active: driver.isActive,
-        user_id: null, // Drivers are global, not user-specific
+        user_id: null,
       };
 
       const { data, error } = await supabase
@@ -294,6 +298,7 @@ export const useUpdateDriver = () => {
       const dbUpdates: TablesUpdate<"drivers"> = {};
 
       if (updates.name !== undefined) dbUpdates.name = updates.name;
+      if (updates.email !== undefined) dbUpdates.email = updates.email || null;
       if (updates.phone !== undefined) dbUpdates.phone = updates.phone;
       if (updates.vehicleType !== undefined) dbUpdates.vehicle_type = updates.vehicleType;
       if (updates.isActive !== undefined) dbUpdates.is_active = updates.isActive;

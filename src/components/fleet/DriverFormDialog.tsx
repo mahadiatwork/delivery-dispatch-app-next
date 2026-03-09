@@ -31,13 +31,14 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Switch } from "@/components/ui/switch";
-import { Loader2 } from 'lucide-react';
+import { Loader2, Mail } from 'lucide-react';
 import { useCreateDriver, useUpdateDriver } from '@/hooks/useOrders';
 import { Driver } from '@/types/order';
 import { toast } from 'sonner';
 
 const driverFormSchema = z.object({
     name: z.string().min(1, 'Name is required'),
+    email: z.string().email('Invalid email address').optional().or(z.literal('')),
     phone: z.string().optional(),
     vehicleType: z.enum(['truck', 'van', 'hotshot'], {
         required_error: "Vehicle type is required",
@@ -63,6 +64,7 @@ export function DriverFormDialog({ open, onOpenChange, driver }: DriverFormDialo
         resolver: zodResolver(driverFormSchema),
         defaultValues: {
             name: driver?.name ?? '',
+            email: driver?.email ?? '',
             phone: driver?.phone ?? '',
             vehicleType: driver?.vehicleType ?? 'truck',
             truckNumber: driver?.truckNumber ?? '',
@@ -70,11 +72,11 @@ export function DriverFormDialog({ open, onOpenChange, driver }: DriverFormDialo
         },
     });
 
-    // Reset form when dialog opens or driver changes
     useEffect(() => {
         if (open) {
             form.reset({
                 name: driver?.name ?? '',
+                email: driver?.email ?? '',
                 phone: driver?.phone ?? '',
                 vehicleType: driver?.vehicleType ?? 'truck',
                 truckNumber: driver?.truckNumber ?? '',
@@ -94,10 +96,13 @@ export function DriverFormDialog({ open, onOpenChange, driver }: DriverFormDialo
             } else {
                 await createDriver.mutateAsync({
                     name: values.name,
+                    email: values.email || '',
                     phone: values.phone || '',
                     truckNumber: values.truckNumber || '',
                     vehicleType: values.vehicleType,
-                    isActive: values.isActive
+                    isActive: values.isActive,
+                    userId: null,
+                    appAccessEnabled: false,
                 });
                 toast.success('Driver added successfully');
             }
@@ -135,6 +140,26 @@ export function DriverFormDialog({ open, onOpenChange, driver }: DriverFormDialo
                                     <FormControl>
                                         <Input placeholder="Driver name" {...field} />
                                     </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                            <Input placeholder="driver@example.com" className="pl-10" {...field} />
+                                        </div>
+                                    </FormControl>
+                                    <FormDescription>
+                                        Required for giving driver app access.
+                                    </FormDescription>
                                     <FormMessage />
                                 </FormItem>
                             )}

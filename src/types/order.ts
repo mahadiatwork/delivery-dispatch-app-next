@@ -62,8 +62,11 @@ export interface Order {
 export interface Driver {
   id: string;
   name: string;
+  email: string;
   phone: string;
   truckNumber: string;
   vehicleType: "truck" | "van" | "hotshot";
   isActive: boolean;
+  userId: string | null;
+  appAccessEnabled: boolean;
 }

@@ -6,17 +6,17 @@ import { Order, PickingColumn, Driver } from '@/types/order';
 
 // Default drivers - used as fallback when database is empty
 const defaultDrivers: Driver[] = [
-  { id: 'driver-1', name: 'Justin Scholten', phone: '', truckNumber: 'T95', vehicleType: 'truck', isActive: true },
-  { id: 'driver-2', name: 'Kyle Bauman', phone: '', truckNumber: 'T88', vehicleType: 'truck', isActive: true },
-  { id: 'driver-3', name: 'Jeff Lince', phone: '', truckNumber: 'T80', vehicleType: 'truck', isActive: true },
-  { id: 'driver-4', name: 'Scott Masters', phone: '', truckNumber: 'T60', vehicleType: 'truck', isActive: true },
-  { id: 'driver-5', name: 'Rich Martineau', phone: '', truckNumber: 'T50', vehicleType: 'truck', isActive: true },
-  { id: 'driver-6', name: 'Chris Nunes', phone: '', truckNumber: 'T25', vehicleType: 'truck', isActive: true },
-  { id: 'driver-7', name: 'Andy Long', phone: '', truckNumber: 'T97', vehicleType: 'truck', isActive: true },
-  { id: 'driver-8', name: 'Stephen Ives', phone: '', truckNumber: 'T40', vehicleType: 'truck', isActive: true },
-  { id: 'driver-9', name: 'Dan Gambin', phone: '', truckNumber: 'T35', vehicleType: 'truck', isActive: true },
-  { id: 'driver-10', name: 'Nicole Reynolds', phone: '', truckNumber: 'T30', vehicleType: 'truck', isActive: true },
-  { id: 'driver-11', name: 'Paul Chiasson', phone: '', truckNumber: 'T92', vehicleType: 'truck', isActive: true },
+  { id: 'driver-1', name: 'Justin Scholten', email: '', phone: '', truckNumber: 'T95', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-2', name: 'Kyle Bauman', email: '', phone: '', truckNumber: 'T88', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-3', name: 'Jeff Lince', email: '', phone: '', truckNumber: 'T80', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-4', name: 'Scott Masters', email: '', phone: '', truckNumber: 'T60', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-5', name: 'Rich Martineau', email: '', phone: '', truckNumber: 'T50', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-6', name: 'Chris Nunes', email: '', phone: '', truckNumber: 'T25', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-7', name: 'Andy Long', email: '', phone: '', truckNumber: 'T97', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-8', name: 'Stephen Ives', email: '', phone: '', truckNumber: 'T40', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-9', name: 'Dan Gambin', email: '', phone: '', truckNumber: 'T35', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-10', name: 'Nicole Reynolds', email: '', phone: '', truckNumber: 'T30', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
+  { id: 'driver-11', name: 'Paul Chiasson', email: '', phone: '', truckNumber: 'T92', vehicleType: 'truck', isActive: true, userId: null, appAccessEnabled: false },
 ];
 
 interface OrderStore {

@@ -52,7 +52,9 @@ export type Database = {
       }
       drivers: {
         Row: {
+          app_access_enabled: boolean
           created_at: string
+          email: string | null
           id: string
           is_active: boolean
           name: string
@@ -63,7 +65,9 @@ export type Database = {
           vehicle_type: Database["public"]["Enums"]["vehicle_type"]
         }
         Insert: {
+          app_access_enabled?: boolean
           created_at?: string
+          email?: string | null
           id?: string
           is_active?: boolean
           name: string
@@ -74,7 +78,9 @@ export type Database = {
           vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
         }
         Update: {
+          app_access_enabled?: boolean
           created_at?: string
+          email?: string | null
           id?: string
           is_active?: boolean
           name?: string
